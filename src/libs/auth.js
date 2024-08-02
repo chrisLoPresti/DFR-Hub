@@ -1,15 +1,14 @@
-import { connectDB } from "@/libs/mongodb";
+import dbConnect from "@/libs/mongodb";
 import User from "@/models/User";
-import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 
-export const authOptions: NextAuthOptions  = {
+export const authOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -19,7 +18,7 @@ export const authOptions: NextAuthOptions  = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        await connectDB();
+        await dbConnect();
         const userFound = await User.findOne({
           email: credentials?.email,
         }).select("+password");
@@ -27,7 +26,7 @@ export const authOptions: NextAuthOptions  = {
         if (!userFound) throw new Error("Invalid Email");
 
         const passwordMatch = await bcrypt.compare(
-          credentials!.password,
+          credentials?.password,
           userFound.password
         );
 
@@ -53,7 +52,7 @@ export const authOptions: NextAuthOptions  = {
       }
 
       if (user) {
-        const u = user as unknown as any;
+        const u = user;
         return {
           ...token,
           id: u.id,
@@ -70,7 +69,7 @@ export const authOptions: NextAuthOptions  = {
           _id: token.id,
           name: token.name,
           phone: token.phone,
-        }
+        },
       };
     },
   },

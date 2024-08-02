@@ -1,12 +1,12 @@
-import { connectDB } from "@/libs/mongodb";
+import dbConnect from "@/libs/mongodb";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
-export async function POST(request: Request) {
+export async function POST(request) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const { name, email, password, phone } = await request.json();
 
@@ -48,10 +48,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: error.message }, { status: 400 });
     } else {
       console.error("Error during signup:", error);
       return NextResponse.error();
@@ -59,11 +56,12 @@ export async function POST(request: Request) {
   }
 }
 
-export async function PUT(request: Request) {
+export async function PUT(request) {
   try {
-    await connectDB();
+    await dbConnect();
 
-    const { userId, name, email, password, phone, address } = await request.json();
+    const { userId, name, email, password, phone, address } =
+      await request.json();
 
     if (password && password.length < 6) {
       return NextResponse.json(
@@ -71,14 +69,11 @@ export async function PUT(request: Request) {
         { status: 400 }
       );
     }
-    
+
     const userToUpdate = await User.findById(userId);
 
     if (!userToUpdate) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     if (name) {
@@ -121,10 +116,7 @@ export async function PUT(request: Request) {
     );
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: error.message }, { status: 400 });
     } else {
       console.error("Error during user update:", error);
       return NextResponse.error();
@@ -132,21 +124,18 @@ export async function PUT(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(request) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const { userId } = await request.json();
 
     const user = await User.findById(userId);
 
     if (!user) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
-    
+
     await user.remove();
 
     return NextResponse.json(

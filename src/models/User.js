@@ -1,17 +1,6 @@
 import { Schema, model, models } from "mongoose";
 
-export interface UserDocument {
-  email: string;
-  password: string;
-  name: string;
-  phone: string;
-  image: string;
-  _id: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const UserSchema = new Schema<UserDocument>({
+const UserSchema = new Schema({
     email: {
       type: String,
       unique: true,
@@ -42,5 +31,5 @@ const UserSchema = new Schema<UserDocument>({
   }
 );
 
-const User = models.User || model<UserDocument>('User', UserSchema);
+const User = models.User || model('User', UserSchema);
 export default User;

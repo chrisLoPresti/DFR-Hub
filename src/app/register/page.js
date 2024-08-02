@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ const Signup = () => {
     }
   }, [session, router]);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const formData = new FormData(event.currentTarget);

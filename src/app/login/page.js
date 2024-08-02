@@ -23,7 +23,7 @@ const Signin = () => {
     }
   }, [session, router]);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const res = await signIn("credentials", {
@@ -33,7 +33,7 @@ const Signin = () => {
     });
 
     if (res?.error) {
-      setError(res.error as string)
+      setError(res.error)
     };
 
     if (!res?.error) {
@@ -55,7 +55,7 @@ const Signin = () => {
         <input
           type="email"
           placeholder="Email"
-          className="w-full h-8 border border-solid border-[#242424] py-1 px-2.5 rounded bg-black text-[13px]"
+          className="w-full h-8 border border-solid border-[#242424] py-1 px-2.5 rounded bg-black text-white text-[13px]"
           name="email"
         />
 
@@ -64,11 +64,11 @@ const Signin = () => {
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            className="w-full h-8 border border-solid border-[#242424] py-1 px-2.5 rounded-l bg-black text-[13px]"
+            className="w-full h-8 border border-solid border-[#242424] py-1 px-2.5 rounded-l bg-black text-white text-[13px]"
             name="password"
           />
           <button
-            className="w-2/12	border-y border-r border-solid border-[#242424] bg-black rounded-r 
+            className="w-2/12	border-y border-r border-solid border-[#242424] bg-black text-white rounded-r 
           flex items-center justify-center transition duration-150 ease hover:bg-[#1A1A1A]"
             onClick={(e) => {
               e.preventDefault();
@@ -78,7 +78,7 @@ const Signin = () => {
             {showPassword ? <BiSolidHide /> : <BiSolidShow />}
           </button>
         </div>
-        <button className="w-full bg-black border border-solid border-[#242424] py-1.5 mt-2.5 rounded
+        <button className="w-full bg-black text-white border border-solid border-[#242424] py-1.5 mt-2.5 rounded
         transition duration-150 ease hover:bg-[#1A1A1A] text-[13px]"
         >
           Signup
@@ -90,7 +90,7 @@ const Signin = () => {
         </div>
 
         <button
-          className="flex py-2 px-4 text-sm	align-middle items-center rounded text-999 bg-black 
+          className="flex py-2 px-4 text-sm	align-middle items-center rounded text-999 bg-black text-white 
           border border-solid border-[#242424] transition duration-150 ease hover:bg-[#1A1A1A] gap-3"
           onClick={(e) => {
             e.preventDefault();

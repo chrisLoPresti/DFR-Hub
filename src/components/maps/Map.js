@@ -1,0 +1,160 @@
+/* 
+Since the map was loaded on client side, 
+we need to make this component client rendered as well else error occurs
+*/
+"use client";
+
+//Map component Component from library
+import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import { useCallback, useEffect, useState } from "react";
+import { useGeolocated } from "react-geolocated";
+import MapMarker from "./MapMarker";
+import CreatePinPointButton from "./CreatePinPointButton";
+import themeConfig from "@/../tailwind.config";
+import {
+  MapAnnotationProvider,
+  useMapAnnotationContext,
+} from "@/context/MapAnnotationContext";
+
+const markerColors = {
+  blue: themeConfig.theme.extend.colors["blue-annotation"],
+  yellow: themeConfig.theme.extend.colors["yellow-annotation"],
+  purple: themeConfig.theme.extend.colors["purple-annotation"],
+  green: themeConfig.theme.extend.colors["green-annotation"],
+  red: themeConfig.theme.extend.colors["blue-annotation"],
+};
+
+//Map's styling
+const containerStyle = {
+  width: "100%",
+  height: "100%",
+};
+
+const MapComponent = () => {
+  const [map, setMap] = useState(null);
+  const [center, setCenter] = useState(null);
+  const [enablePinPoints, setEnablePinPoints] = useState(false);
+  const [defaultMarkerColor, setDefaultMarkerColor] = useState("blue");
+
+  const { markers, setMarkers, createNewMapMarker, getAllMapMarkers } =
+    useMapAnnotationContext();
+
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API || "",
+  });
+
+  const { coords } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: Infinity,
+    },
+    watchPosition: false,
+    userDecisionTimeout: null,
+    suppressLocationOnMount: false,
+    // geolocationProvider: navigator.geolocation,
+    isOptimisticGeolocationEnabled: true,
+    watchLocationPermissionChange: false,
+  });
+
+  const onLoad = useCallback((map) => {
+    // This is just an example of getting and using the map instance!!! don't just blindly copy!
+    // const bounds = new window.google.maps.LatLngBounds(center);
+    // map.fitBounds(bounds);
+    map.setZoom(15);
+    setMap(map);
+  }, []);
+
+  const onUnmount = useCallback(() => {
+    setMap(null);
+  }, []);
+
+  const toggleEnablePinPoints = () => {
+    if (enablePinPoints) {
+      map.setOptions({ draggableCursor: "" });
+    } else {
+      map.setOptions({ draggableCursor: "crosshair" });
+    }
+    setEnablePinPoints(!enablePinPoints);
+  };
+
+  const createMarker = async ({ latLng }) => {
+    await createNewMapMarker({
+      name: `new pin ${markers.length}`,
+      position: {
+        lat: latLng.lat(),
+        lng: latLng.lng(),
+      },
+      color: defaultMarkerColor,
+    });
+  };
+
+  const deleteMarker = (index) => () => {
+    markers.splice(index, 1);
+    setMarkers([...markers]);
+  };
+
+  const changeDefaultMarkerColor = (color) => () => {
+    setDefaultMarkerColor(color);
+  };
+
+  useEffect(() => {
+    setCenter({
+      lat: coords?.latitude,
+      lng: coords?.longitude,
+    });
+  }, [coords]);
+
+  useEffect(() => {
+    getAllMapMarkers();
+  }, []);
+
+  return isLoaded && center ? (
+    <div className="relative w-full h-full">
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={center}
+        zoom={1}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+        mapTypeId="satellite"
+        onClick={enablePinPoints ? createMarker : null}
+      >
+        {/* Child components, such as markers, info windows, etc. */}
+        <>
+          {markers.map(({ position: { lat, lng }, name, color }, index) => (
+            <MapMarker
+              key={name}
+              lat={lat}
+              lng={lng}
+              name={name}
+              color={color}
+              index={index}
+              deleteMarker={deleteMarker}
+            />
+          ))}
+        </>
+      </GoogleMap>
+      <CreatePinPointButton
+        enablePinPoints={enablePinPoints}
+        toggleEnablePinPoints={toggleEnablePinPoints}
+        markerColors={markerColors}
+        defaultMarkerColor={defaultMarkerColor}
+        changeDefaultMarkerColor={changeDefaultMarkerColor}
+      />
+    </div>
+  ) : (
+    <></>
+  );
+};
+
+const MapWithContext = (props) => {
+  return (
+    <MapAnnotationProvider>
+      <MapComponent {...props} />
+    </MapAnnotationProvider>
+  );
+};
+
+export default MapWithContext;
