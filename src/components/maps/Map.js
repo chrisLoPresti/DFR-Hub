@@ -156,7 +156,7 @@ createMarker({ latLng: address[0].geometry.location });
             <input
               type='text'
               placeholder='Search for an address'
-              className="overflow-ellipses outline-none w-96 h-27 absolute top-2.5 p-2 rounded-sm shadow-lg right-2"
+              className="overflow-ellipses outline-none w-96 h-27 absolute top-2.5 p-2 rounded-sm shadow-lg right-2 z-20"
             />
           </StandaloneSearchBox>
           {markers.map(({ position: { lat, lng }, name, color }, index) => (
@@ -170,15 +170,15 @@ createMarker({ latLng: address[0].geometry.location });
               deleteMarker={deleteMarker}
             />
           ))}
+          <CreatePinPointButton
+            enablePinPoints={enablePinPoints}
+            toggleEnablePinPoints={toggleEnablePinPoints}
+            markerColors={markerColors}
+            defaultMarkerColor={defaultMarkerColor}
+            changeDefaultMarkerColor={changeDefaultMarkerColor}
+          />
         </>
       </GoogleMap>
-      <CreatePinPointButton
-        enablePinPoints={enablePinPoints}
-        toggleEnablePinPoints={toggleEnablePinPoints}
-        markerColors={markerColors}
-        defaultMarkerColor={defaultMarkerColor}
-        changeDefaultMarkerColor={changeDefaultMarkerColor}
-      />
     </div>
   ) : (
     <></>
