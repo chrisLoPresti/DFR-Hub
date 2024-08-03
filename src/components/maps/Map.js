@@ -144,7 +144,8 @@ createMarker({ latLng: address[0].geometry.location });
         options={{
           fullscreenControl: false,
           mapTypeId: "satellite",
-          rotateControl: true
+          rotateControl: true,
+          streetViewControl: false
         }}
       >
         {/* Child components, such as markers, info windows, etc. */}
