@@ -89,8 +89,8 @@ const MapComponent = () => {
     setEnablePinPoints(!enablePinPoints);
   };
 
-  const createMarker = async ({ latLng }) => {
-    await createNewMapMarker({
+  const createMarker = useCallback( async ({ latLng }) => {
+  const marker =  await createNewMapMarker({
       name: `new pin ${uuidv4()}`,
       position: {
         lat: latLng.lat(),
@@ -98,7 +98,12 @@ const MapComponent = () => {
       },
       color: defaultMarkerColor,
     });
-  };
+
+    if(marker._id){
+      map.getBounds().contains(latLng)
+      map.panTo(latLng)
+    }
+  }, [map]);
 
   const deleteMarker = (index) => () => {
     deleteMapMarker(markers[index]);
@@ -113,7 +118,7 @@ const MapComponent = () => {
   const onAddressFound = useCallback((e) => {
 const address = searchBox.getPlaces();
 
-createMarker({ latLng: address[0].geometry.location })
+createMarker({ latLng: address[0].geometry.location });
 },[searchBox]);
 
   useEffect(() => {
