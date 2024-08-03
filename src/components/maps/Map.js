@@ -89,6 +89,7 @@ const MapComponent = () => {
   };
 
   const createMarker = useCallback( async ({ latLng, name }) => {
+
   const marker =  await createNewMapMarker({
       name: name || `new pin ${new Date().toLocaleString()}`,// `new pin ${uuidv4()}`,
       position: {
@@ -142,7 +143,7 @@ createMarker({ name:address[0].name,  latLng: address[0].geometry.location });
         onClick={enablePinPoints ? createMarker : null}
         options={{
           fullscreenControl: false,
-          mapTypeId: "hybrid",
+          mapTypeId: map?.getMapTypeId() || "hybrid",
           rotateControl: true,
           streetViewControl: false,
           // disableDefaultUI: true
