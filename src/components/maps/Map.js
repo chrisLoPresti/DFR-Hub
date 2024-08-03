@@ -140,8 +140,12 @@ createMarker({ latLng: address[0].geometry.location });
         zoom={1}
         onLoad={onMapLoad}
         onUnmount={onUnmount}
-        mapTypeId="satellite"
         onClick={enablePinPoints ? createMarker : null}
+        options={{
+          fullscreenControl: false,
+          mapTypeId: "satellite",
+          rotateControl: true
+        }}
       >
         {/* Child components, such as markers, info windows, etc. */}
         <>
@@ -152,7 +156,7 @@ createMarker({ latLng: address[0].geometry.location });
             <input
               type='text'
               placeholder='Search for an address'
-              className="overflow-ellipses outline-none w-96 h-27 absolute top-2.5 p-2 rounded-sm shadow-lg right-16"
+              className="overflow-ellipses outline-none w-96 h-27 absolute top-2.5 p-2 rounded-sm shadow-lg right-2"
             />
           </StandaloneSearchBox>
           {markers.map(({ position: { lat, lng }, name, color }, index) => (

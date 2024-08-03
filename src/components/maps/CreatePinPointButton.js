@@ -37,7 +37,8 @@ const CreatePinPointButton = ({
 
   return (
     <div
-      className="absolute top-20 right-2.5 z-10 flex"
+    style={{zIndex: 100000}}
+      className="absolute top-20 right-2.5 z-50 flex"
       onMouseEnter={showColorPicker}
       onMouseLeave={hideColorPicker}
     >
