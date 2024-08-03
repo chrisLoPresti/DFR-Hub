@@ -89,9 +89,9 @@ const MapComponent = () => {
     setEnablePinPoints(!enablePinPoints);
   };
 
-  const createMarker = useCallback( async ({ latLng }) => {
+  const createMarker = useCallback( async ({ latLng, name }) => {
   const marker =  await createNewMapMarker({
-      name: `new pin ${uuidv4()}`,
+      name: name || `new pin ${new Date().toLocaleString()}`,// `new pin ${uuidv4()}`,
       position: {
         lat: latLng.lat(),
         lng: latLng.lng(),
@@ -118,7 +118,7 @@ const MapComponent = () => {
   const onAddressFound = useCallback((e) => {
 const address = searchBox.getPlaces();
 
-createMarker({ latLng: address[0].geometry.location });
+createMarker({ name:address[0].name,  latLng: address[0].geometry.location });
 },[searchBox]);
 
   useEffect(() => {
