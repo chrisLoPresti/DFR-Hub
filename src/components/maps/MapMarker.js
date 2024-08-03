@@ -44,7 +44,7 @@ const MapMarker = ({ lat, lng, name, deleteMarker, color, index }) => {
         text: name,
         color: "white",
         fontSize: "18px",
-        className: "ml-14 mb-8",
+        className: "ml-8 mb-8",
       }}
     >
       {showInfowWindow && (
