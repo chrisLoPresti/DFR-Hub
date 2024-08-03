@@ -24,7 +24,8 @@ export const MapAnnotationProvider = ({ children }) => {
           "https://nj.unmannedlive.com/dfr/newcall",
           {
             ...marker,
-            lon: marker.lng,
+            lat: marker.position.lat,
+            lon: marker.position.lng,
             z: "10.5",
             elementid: "a0eebed4-0c5e-4e3a-a8db-dbf7829e8d76",
             workspaceid: "b0eebed4-0c5e-4e3a-a8db-dbf7829e8dd8",
