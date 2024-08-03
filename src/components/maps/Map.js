@@ -143,9 +143,10 @@ createMarker({ latLng: address[0].geometry.location });
         onClick={enablePinPoints ? createMarker : null}
         options={{
           fullscreenControl: false,
-          mapTypeId: "satellite",
+          mapTypeId: "hybrid",
           rotateControl: true,
-          streetViewControl: false
+          streetViewControl: false,
+          // disableDefaultUI: true
         }}
       >
         {/* Child components, such as markers, info windows, etc. */}
