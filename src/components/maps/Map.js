@@ -103,7 +103,7 @@ const MapComponent = () => {
       map.getBounds().contains(latLng)
       map.panTo(latLng)
     }
-  }, [map]);
+  }, [map,defaultMarkerColor,createNewMapMarker]);
 
   const deleteMarker = (index) => () => {
     deleteMapMarker(markers[index]);
