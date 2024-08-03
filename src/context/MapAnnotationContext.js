@@ -20,21 +20,21 @@ export const MapAnnotationProvider = ({ children }) => {
         setLoading(true);
         setErrors(null);
 
-      //   const res = await axios.post(
-      //     "https://nj.unmannedlive.com/dfr/newcall",
-      //     {
-      //       ...marker,
-      //       lon: marker.lng,
-      //       z: "10.5",
-      //       elementid: "a0eebed4-0c5e-4e3a-a8db-dbf7829e8d76",
-      //       workspaceid: "b0eebed4-0c5e-4e3a-a8db-dbf7829e8dd8",
-      //       sn: "1581F5BKD223Q00A520F",
-      //     },
-      //     {
-      //       withCredentials: false,
-      //     }
-      //   );
-      // if(res.status === 201){
+        const res = await axios.post(
+          "https://nj.unmannedlive.com/dfr/newcall",
+          {
+            ...marker,
+            lon: marker.lng,
+            z: "10.5",
+            elementid: "a0eebed4-0c5e-4e3a-a8db-dbf7829e8d76",
+            workspaceid: "b0eebed4-0c5e-4e3a-a8db-dbf7829e8dd8",
+            sn: "1581F5BKD223Q00A520F",
+          },
+          {
+            withCredentials: false,
+          }
+        );
+      if(res.status === 201){
         const { data } = await axios.post(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/map-annotations/marker`,
           marker
@@ -42,9 +42,9 @@ export const MapAnnotationProvider = ({ children }) => {
         successToast(`Successfully created Map Marker: ${data.name}!`);
         setMarkers([...markers, data]);
         return data;
-      // } else {
-      //   errorToast(`Unable to create map marker: ${marker.name}`);
-      // }
+      } else {
+        errorToast(`Unable to create map marker: ${marker.name}`);
+      }
 
         
       } catch (error) {
