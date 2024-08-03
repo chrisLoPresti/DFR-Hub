@@ -1,4 +1,4 @@
-import { successToast } from "@/components/Toast";
+import { errorToast, successToast } from "@/components/Toast";
 import axios from "axios";
 import { createContext, useCallback, useContext, useState } from "react";
 
@@ -20,29 +20,58 @@ export const MapAnnotationProvider = ({ children }) => {
         setLoading(true);
         setErrors(null);
 
-        // const res = await axios.post(
-        //   "https://nj.unmannedlive.com/dfr/newcall",
-        //   {
-        //     ...marker,
-        //     lon: marker.lng,
-        //     z: "10.5",
-        //     elementid: "a0eebed4-0c5e-4e3a-a8db-dbf7829e8d76",
-        //     workspaceid: "b0eebed4-0c5e-4e3a-a8db-dbf7829e8dd8",
-        //     sn: "1581F5BKD223Q00A520F",
-        //   },
-        //   {
-        //     withCredentials: false,
-        //   }
-        // );
-        // console.log(res);
-        // return;
-        const { data } = await axios.post(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/map-annotations/marker`,
-          marker
+        const res = await axios.post(
+          "https://nj.unmannedlive.com/dfr/newcall",
+          {
+            ...marker,
+            lon: marker.lng,
+            z: "10.5",
+            elementid: "a0eebed4-0c5e-4e3a-a8db-dbf7829e8d76",
+            workspaceid: "b0eebed4-0c5e-4e3a-a8db-dbf7829e8dd8",
+            sn: "1581F5BKD223Q00A520F",
+          },
+          {
+            withCredentials: false,
+          }
         );
-        successToast(`Successfully created Map Marker: ${data.name}!`);
-        setMarkers([...markers, data]);
-        return data;
+if(res.status === 201){
+  const { data } = await axios.post(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/map-annotations/marker`,
+    marker
+  );
+  successToast(`Successfully created Map Marker: ${data.name}!`);
+  setMarkers([...markers, data]);
+  return data;
+} else {
+  errorToast(`Unable to create map marker: ${marker.name}`);
+}
+
+        
+      } catch (error) {
+        setLoading(false);
+        errorToast(`Unable to create map marker: ${marker.name}`);
+        return { error };
+      }
+    },
+    [setErrors, setLoading, markers]
+  );
+
+  const deleteMapMarker = useCallback(
+    async (marker) => {
+      try {
+        setLoading(true);
+        setErrors(null);
+
+        
+  const { data } = await axios.delete(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/map-annotations/marker`,
+    {data: {marker}}
+  );
+  successToast(`Successfully deleted Map Marker: ${marker.name}`);
+  setMarkers([...markers.filter(({ name }) => name !== marker.name)]);
+  return data;
+
+        
       } catch (error) {
         setLoading(false);
         return { error };
@@ -75,7 +104,7 @@ export const MapAnnotationProvider = ({ children }) => {
         setMarkers,
         createNewMapMarker,
         errors,
-        getAllMapMarkers,
+        getAllMapMarkers,deleteMapMarker
       }}
     >
       {children}

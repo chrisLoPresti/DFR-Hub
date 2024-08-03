@@ -32,6 +32,25 @@ export async function POST(request) {
   }
 }
 
+export async function DELETE(request) {
+  try {
+    await dbConnect();
+    const { marker } = await request.json();
+
+    const deletedMarker = await MapMarker.findByIdAndDelete(marker._id);
+
+    return NextResponse.json(deletedMarker, { status: 200 }
+    );
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return NextResponse.json({ message: error.message }, { status: 400 });
+    } else {
+      console.error("Error during delete marker:", error);
+      return NextResponse.error();
+    }
+  }
+}
+
 export async function GET() {
   try {
     await dbConnect();

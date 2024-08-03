@@ -5,7 +5,7 @@ we need to make this component client rendered as well else error occurs
 "use client";
 
 //Map component Component from library
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, StandaloneSearchBox} from "@react-google-maps/api";
 import { useCallback, useEffect, useState } from "react";
 import { useGeolocated } from "react-geolocated";
 import MapMarker from "./MapMarker";
@@ -15,6 +15,7 @@ import {
   MapAnnotationProvider,
   useMapAnnotationContext,
 } from "@/context/MapAnnotationContext";
+import { v4 as uuidv4 } from 'uuid';
 
 const markerColors = {
   blue: themeConfig.theme.extend.colors["blue-annotation"],
@@ -32,16 +33,18 @@ const containerStyle = {
 
 const MapComponent = () => {
   const [map, setMap] = useState(null);
+  const [searchBox, setSearchBox] = useState(null);
   const [center, setCenter] = useState(null);
   const [enablePinPoints, setEnablePinPoints] = useState(false);
   const [defaultMarkerColor, setDefaultMarkerColor] = useState("blue");
 
-  const { markers, setMarkers, createNewMapMarker, getAllMapMarkers } =
+  const { markers, setMarkers, createNewMapMarker, getAllMapMarkers ,deleteMapMarker } =
     useMapAnnotationContext();
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API || "",
+    libraries: ["places"]
   });
 
   const { coords } = useGeolocated({
@@ -58,12 +61,19 @@ const MapComponent = () => {
     watchLocationPermissionChange: false,
   });
 
-  const onLoad = useCallback((map) => {
+  const onMapLoad = useCallback((map) => {
     // This is just an example of getting and using the map instance!!! don't just blindly copy!
     // const bounds = new window.google.maps.LatLngBounds(center);
     // map.fitBounds(bounds);
     map.setZoom(15);
     setMap(map);
+  }, []);
+
+  const onSearchBoxLoad = useCallback((newSearchBox) => {
+    // This is just an example of getting and using the map instance!!! don't just blindly copy!
+    // const bounds = new window.google.maps.LatLngBounds(center);
+    // map.fitBounds(bounds);
+    setSearchBox(newSearchBox);
   }, []);
 
   const onUnmount = useCallback(() => {
@@ -81,7 +91,7 @@ const MapComponent = () => {
 
   const createMarker = async ({ latLng }) => {
     await createNewMapMarker({
-      name: `new pin ${markers.length}`,
+      name: `new pin ${uuidv4()}`,
       position: {
         lat: latLng.lat(),
         lng: latLng.lng(),
@@ -91,6 +101,7 @@ const MapComponent = () => {
   };
 
   const deleteMarker = (index) => () => {
+    deleteMapMarker(markers[index]);
     markers.splice(index, 1);
     setMarkers([...markers]);
   };
@@ -98,6 +109,12 @@ const MapComponent = () => {
   const changeDefaultMarkerColor = (color) => () => {
     setDefaultMarkerColor(color);
   };
+
+  const onAddressFound = useCallback((e) => {
+const address = searchBox.getPlaces();
+
+createMarker({ latLng: address[0].geometry.location })
+},[searchBox]);
 
   useEffect(() => {
     setCenter({
@@ -116,13 +133,23 @@ const MapComponent = () => {
         mapContainerStyle={containerStyle}
         center={center}
         zoom={1}
-        onLoad={onLoad}
+        onLoad={onMapLoad}
         onUnmount={onUnmount}
         mapTypeId="satellite"
         onClick={enablePinPoints ? createMarker : null}
       >
         {/* Child components, such as markers, info windows, etc. */}
         <>
+        <StandaloneSearchBox
+         onPlacesChanged={onAddressFound} 
+         onLoad={onSearchBoxLoad}
+         >
+            <input
+              type='text'
+              placeholder='Search for an address'
+              className="overflow-ellipses outline-none w-96 h-27 absolute top-2.5 p-2 rounded-sm shadow-lg right-16"
+            />
+          </StandaloneSearchBox>
           {markers.map(({ position: { lat, lng }, name, color }, index) => (
             <MapMarker
               key={name}
