@@ -12,10 +12,9 @@ import MapMarker from "./MapMarker";
 import CreatePinPointButton from "./CreatePinPointButton";
 import themeConfig from "@/../tailwind.config";
 import {
-  MapAnnotationProvider,
   useMapAnnotationContext,
 } from "@/context/MapAnnotationContext";
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 
 const markerColors = {
   blue: themeConfig.theme.extend.colors["blue-annotation"],
@@ -119,7 +118,7 @@ const MapComponent = () => {
 const address = searchBox.getPlaces();
 
 createMarker({ name:address[0].name,  latLng: address[0].geometry.location });
-},[searchBox]);
+},[searchBox,createMarker]);
 
   useEffect(() => {
     setCenter({
@@ -187,12 +186,6 @@ createMarker({ name:address[0].name,  latLng: address[0].geometry.location });
   );
 };
 
-const MapWithContext = (props) => {
-  return (
-    <MapAnnotationProvider>
-      <MapComponent {...props} />
-    </MapAnnotationProvider>
-  );
-};
 
-export default MapWithContext;
+
+export default MapComponent;

@@ -105,7 +105,8 @@ export const MapAnnotationProvider = ({ children }) => {
         setMarkers,
         createNewMapMarker,
         errors,
-        getAllMapMarkers,deleteMapMarker
+        getAllMapMarkers,
+        deleteMapMarker
       }}
     >
       {children}

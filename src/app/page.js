@@ -12,7 +12,7 @@ export default function Home() {
   const router = useRouter();
 
   if (status === "authenticated") {
-    router.push("/mission-planning");
+    router.push("/map-annotations");
   } else {
     router.push("/login");
   }
