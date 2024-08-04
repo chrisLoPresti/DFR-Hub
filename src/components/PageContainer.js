@@ -3,6 +3,7 @@
 import { Tooltip } from "react-tooltip";
 import SideNavigation from "./SideNavigation";
 import ToastProvider from "@/providers/toast-provider";
+import { MapContextProvider } from "@/context/MapContext";
 
 const PageContainer = ({ children }) => {
   return (
@@ -10,7 +11,8 @@ const PageContainer = ({ children }) => {
       <header className="sticky top-0">
         <div className="bg-tertiary w-full h-12 shadow-lg"></div>
       </header>
-     <ToastProvider>
+     <MapContextProvider>
+      <ToastProvider>
         <div className="flex h-[calc(100vh_-_48px)] relative">
         <div className="w-80">
           <SideNavigation />
@@ -21,6 +23,7 @@ const PageContainer = ({ children }) => {
       <Tooltip id="tooltip"/>
       </div>
      </ToastProvider>
+     </MapContextProvider>
     </>
   );
 };
