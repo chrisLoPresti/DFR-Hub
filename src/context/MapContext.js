@@ -269,10 +269,12 @@ export const Map = () => {
   }
 
   const storeMapTypeId = useCallback(() => {
-    const newMapTypeId = map?.getMapTypeId() || localStorage.getItem('mapTypeId');
-    localStorage.setItem("mapTypeId", newMapTypeId);
-    setMapTypeId(newMapTypeId)
-  }, [map]);
+    const newMapTypeId =  map?.getMapTypeId() ?? mapTypeId;
+    if(newMapTypeId  !== mapTypeId){
+     localStorage.setItem("mapTypeId", newMapTypeId);
+     setMapTypeId(newMapTypeId)
+    }
+  }, [map, mapTypeId]);
 
   useEffect(() => {
       setCenter({
@@ -282,7 +284,7 @@ export const Map = () => {
     }, [coords]);
 
 useEffect( ()=>{
-  const storedMapTypeId =  localStorage.getItem('mapTypeId') || 'hybrid';
+  const storedMapTypeId =  localStorage?.getItem('mapTypeId') ?? 'hybrid';
   setMapTypeId(storedMapTypeId);
 },[])
  
