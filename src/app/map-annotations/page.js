@@ -1,12 +1,14 @@
-import Map from "@/components/maps/Map";
-import PageContainer from "@/components/PageContainer";
+"use client"
 
-const MissionPlanning = () => {
-  return (
-    <PageContainer>
-      <Map />
-    </PageContainer>
-  );
+import PageContainer from "@/components/PageContainer";
+import { Map } from "@/context/MapContext";
+
+const MappAnnotations = () => {
+  return <PageContainer>
+          <Map/>
+          </PageContainer>
+
 };
 
-export default MissionPlanning;
+
+export default MappAnnotations;
