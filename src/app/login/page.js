@@ -19,7 +19,7 @@ const Signin = () => {
 
   useEffect(() => {
     if (session?.user) {
-      router.push("/");
+      router.push("/map-annotations");
     }
   }, [session, router]);
 
