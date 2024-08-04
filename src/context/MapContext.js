@@ -197,6 +197,7 @@ const containerStyle = {
 export const Map = () => {
  const [searchBox, setSearchBox] = useState(null);
   const [enablePinPoints, setEnablePinPoints] = useState(false);
+  const [mapTypeId, setMapTypeId] = useState(null);
 
 
     const { map, createMarker, deleteMarker, markers , center, setCenter, setMap, selectedMapMarker, selectMapMarker, defaultMarkerColor, changeDefaultMarkerColor} = useMapContext();
@@ -266,6 +267,12 @@ export const Map = () => {
     map.setCenter(selectedMapMarker?.position);
   }
 
+  const storeMapTypeId = useCallback(() => {
+    const newMapTypeId = map?.getMapTypeId() || localStorage.getItem('mapTypeId');
+    localStorage.setItem("mapTypeId", newMapTypeId);
+    setMapTypeId(newMapTypeId)
+  }, [map]);
+
   useEffect(() => {
       setCenter({
         lat: coords?.latitude,
@@ -273,8 +280,13 @@ export const Map = () => {
       });
     }, [coords]);
 
+useEffect( ()=>{
+  const storedMapTypeId =  localStorage.getItem('mapTypeId') || 'hybrid';
+  setMapTypeId(storedMapTypeId);
+},[])
+ 
   return <MapContextProvider>
-   {isLoaded && center ?  <div className="relative w-full h-full flex">
+   {isLoaded && center && mapTypeId ?  <div className="relative w-full h-full flex">
       {/* isLoaded && center */}
       <GoogleMap
         mapContainerStyle={containerStyle}
@@ -283,9 +295,10 @@ export const Map = () => {
         onLoad={onMapLoad}
         onUnmount={onUnmount}
         onClick={enablePinPoints ? dropMarker : null}
+        onMapTypeIdChanged={storeMapTypeId}
         options={{
           fullscreenControl: false,
-          mapTypeId: map?.getMapTypeId() || "hybrid",
+          mapTypeId: mapTypeId,
           rotateControl: true,
           streetViewControl: false,
           // disableDefaultUI: true
