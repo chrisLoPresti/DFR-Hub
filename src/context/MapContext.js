@@ -25,7 +25,7 @@ export const markerColors = {
   yellow: themeConfig.theme.extend.colors["yellow-annotation"],
   purple: themeConfig.theme.extend.colors["purple-annotation"],
   green: themeConfig.theme.extend.colors["green-annotation"],
-  red: themeConfig.theme.extend.colors["blue-annotation"],
+  red: themeConfig.theme.extend.colors["red-annotation"],
 };
 
 export const MapContextProvider = ({ children }) => {
@@ -134,10 +134,10 @@ export const MapContextProvider = ({ children }) => {
         },
         color,
       });
-
       if(marker._id){
         map.getBounds().contains(latLng)
         map.panTo(latLng)
+        setSelectedMapMarker(marker);
       }
   }, [map,createNewMapMarker]);
 
@@ -273,7 +273,6 @@ export const Map = () => {
       });
     }, [coords]);
 
-
   return <MapContextProvider>
    {isLoaded && center ?  <div className="relative w-full h-full flex">
       {/* isLoaded && center */}
@@ -313,6 +312,7 @@ export const Map = () => {
               color={color}
               index={index}
               selectMapMarker={selectMapMarker}
+              selectedMapMarker={selectedMapMarker}
             />
           ))}
           <CreatePinPointButton
@@ -344,15 +344,21 @@ export const Map = () => {
            </div>
           </div>
           <input id="selected-marker-name" type="text" value={selectedMapMarker?.name} className='w-full shadow-inner text-sm p-2 rounded-sm'/>
-          <ColorButtons color={selectedMapMarker?.color}/>
-          <div className="text-sm w-full">
+          <ColorButtons color={selectedMapMarker?.color} className="bg-transparent"/>
+          <div className="text-sm w-full flex flex-col gap-y-2">
             <div className="flex items-center w-full justify-between">
-              <p className="w-2/3 text-white "> Longitude:</p>  <input id="selected-marker-name" type="text" value={selectedMapMarker?.position?.lng} className='w-1/3 p-2 shadow-inner text-sm rounded-sm'/>
+              <p className="w-1/3 text-white"> Longitude:</p>  <input type="text" value={selectedMapMarker?.position?.lng} className='w-2/3 p-2 shadow-inner text-sm rounded-sm'/>
             </div>
               <div className="flex items-center w-full justify-between">
-              <p className="w-2/3 text-white "> Latitude: </p> <input id="selected-marker-name" type="text" value={selectedMapMarker?.position?.lat} className='w-1/3 p-2 shadow-inner text-sm rounded-sm'/>
+              <p className="w-1/3 text-white"> Latitude: </p> <input type="text" value={selectedMapMarker?.position?.lat} className='w-2/3 p-2 shadow-inner text-sm rounded-sm'/>
               </div>
+                <hr className="my-2"/>
+             <div className="text-white">
+                <p className="mb-2">Created By:</p>
+              <p>{selectedMapMarker?.created_by?.name}</p>
+                <p>{selectedMapMarker?.created_by?.email}</p>
           </div>
+             </div>
         </div>
     </div>
    : 

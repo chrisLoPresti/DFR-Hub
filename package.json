@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@designbycode/tailwindcss-text-stroke": "^1.2.1",
     "@react-google-maps/api": "^2.19.3",
     "axios": "^1.7.3",
     "bcryptjs": "^2.4.3",

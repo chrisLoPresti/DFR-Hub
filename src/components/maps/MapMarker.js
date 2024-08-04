@@ -1,8 +1,10 @@
 import { useState } from "react";
 import {  Marker } from "@react-google-maps/api";
 import themeConfig from "@/../tailwind.config";
+import classNames from "classnames";
+import { markerColors } from "@/context/MapContext";
 
-const MapMarker = ({ lat, lng, name, color, index, selectMapMarker }) => {
+const MapMarker = ({ lat, lng, name, color, index, selectMapMarker,selectedMapMarker }) => {
   const [position, setPosition] = useState({ lat, lng });
 
   const updatePosition = ({ latLng }) => {
@@ -10,7 +12,6 @@ const MapMarker = ({ lat, lng, name, color, index, selectMapMarker }) => {
     const newLng = latLng.lng();
     setPosition({ lat: newLat, lng: newLng });
   };
-
   return (
     <Marker
       position={position}
@@ -27,10 +28,13 @@ const MapMarker = ({ lat, lng, name, color, index, selectMapMarker }) => {
         anchor: new google.maps.Point(258, 500),
       }}
       label={{
-        text: name,
-        color: "white",
+        text:name,
+        color:  'white',
         fontSize: "18px",
-        className: "ml-8 mb-8",
+        className: classNames("ml-8 shadow-xl", {
+          [`bg-${color}-annotation rounded-md p-1 mb-10`]: selectedMapMarker?.name === name,
+          ['drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)] mb-8 ']: selectedMapMarker?.name !== name
+        })
       }}
     />
   );

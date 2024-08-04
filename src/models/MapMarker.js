@@ -17,7 +17,7 @@ const MapMarkerSchema = new Schema({
   color: {
     type: String,
   },
-  updated_by: {
+  created_by: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },

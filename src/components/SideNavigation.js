@@ -42,11 +42,14 @@ const SideNavigation = () => {
     </ul>
     <div className="h-full w-10/12 flex flex-col truncate">
     <p className="my-5 ml-5">Map Annotations</p>
-    {markers?.map(({ name, position }, index) => <div key={name} className={classNames("flex justify-left items-center gap-x-2 text-xl py-2 cursor-pointer p-5", { 
+    {markers?.map(({ name, color }, index) => <div key={name}
+           data-tooltip-id="tooltip"
+           data-tooltip-content={name}
+    className={classNames("flex justify-left items-center gap-x-2 text-xl py-2 cursor-pointer p-5", { 
       'bg-white bg-opacity-10': selectedMapMarker?.name === name
     } )} onClick={selectMapMarker(index)}>
        <Checkbox className="border-white" borderColor="white" size={16}/>
-       <TbDiamonds  />
+       <TbDiamonds  className={`text-${color}-annotation`}/>
       <p className="overflow-hidden text-ellipsis text-sm">
       {name}
       </p>

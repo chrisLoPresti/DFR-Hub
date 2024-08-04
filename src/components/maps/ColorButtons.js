@@ -6,7 +6,7 @@ import { markerColors } from "@/context/MapContext";
   const ColorButtons = ({ className, color, changeColor }) => {
 
 
-    return <div className={classNames("bg-white flex shadow-sm rounded-sm p-2 gap-x-2 justify-center", {[className]: className})}>
+    return <div className={classNames("bg-white flex shadow-sm rounded-sm p-2 gap-x-2", {[className]: className})}>
     {Object.keys(markerColors).map((key) => (
       <button
         key={key}
