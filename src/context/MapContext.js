@@ -12,6 +12,7 @@ import classNames from "classnames";
 import { MdOutlineDelete ,MdOutlineCenterFocusWeak } from "react-icons/md";
 import { FaSpinner } from "react-icons/fa6";
 import ColorButtons from "@/components/maps/ColorButtons";
+import { IoCloseOutline } from "react-icons/io5";
 
 export const MapContext = createContext({
   markers: [],
@@ -336,10 +337,19 @@ useEffect( ()=>{
           />
         </>
       </GoogleMap>
-       <div className={classNames('p-5 bg-tertiary w-80 flex flex-col gap-y-2', {'hidden invisible ': !selectedMapMarker})}>
-          <div className="flex">
-            <label className='text-white' htmlFor='selected-marker-name'>Selected Map Marker</label>
-           <div className="flex items-center justify-center gap-x-2 ml-2">
+       <div className={classNames('px-5 bg-tertiary w-80 flex flex-col gap-y-2', {'hidden invisible ': !selectedMapMarker})}>
+      
+           <div className="flex justify-center items-center">
+             <label className='text-white' htmlFor='selected-marker-name'>Selected Map Marker</label>
+              <button onClick={selectMapMarker(null)} className="text-white ml-auto hover:bg-white hover:bg-opacity-10 rounded-full p-2">
+          <IoCloseOutline className="text-xl"/>
+
+        </button>
+           </div>
+       <div className="flex items-center justify-between">
+
+          <input id="selected-marker-name" type="text" value={selectedMapMarker?.name} className='w-full shadow-inner text-sm p-2 rounded-sm'/>
+              <div className="flex items-center justify-center gap-x-2 ml-2">
              <button 
                 data-tooltip-id="tooltip"
                 data-tooltip-content=" Recenter"
@@ -356,7 +366,6 @@ useEffect( ()=>{
             </button>
            </div>
           </div>
-          <input id="selected-marker-name" type="text" value={selectedMapMarker?.name} className='w-full shadow-inner text-sm p-2 rounded-sm'/>
           <ColorButtons color={selectedMapMarker?.color} className="bg-transparent"/>
           <div className="text-sm w-full flex flex-col gap-y-2">
             <div className="flex items-center w-full justify-between">
