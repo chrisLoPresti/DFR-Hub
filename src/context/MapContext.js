@@ -65,7 +65,7 @@ export const MapContextProvider = ({ children }) => {
         );
       if(res.status === 201){
         const { data } = await axios.post(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/map-annotations/marker`,
+          `/api/map-annotations/marker`,
           marker
         );
         successToast(`Successfully created Map Marker: ${data.name}!`);
@@ -93,7 +93,7 @@ export const MapContextProvider = ({ children }) => {
 
         
   const { data } = await axios.delete(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/map-annotations/marker`,
+    `/api/map-annotations/marker`,
     {data: {marker}}
   );
   successToast(`Successfully deleted Map Marker: ${marker.name}`);
@@ -114,7 +114,7 @@ export const MapContextProvider = ({ children }) => {
       setLoading(true);
       setErrors(null);
       const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/map-annotations/marker`
+        `/api/map-annotations/marker`
       );
 
       setMarkers(data);

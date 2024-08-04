@@ -9,7 +9,7 @@ export async function POST(request) {
     await dbConnect();
     const token = await getToken({
         req:request,
-        secret: process.env.NEXTAUTH_SECRET ?? '',
+        secret: process.env.NEXT_AUTH_SECRET ?? '',
     })
     const { position, name, color } = await request.json();
     const marker = new MapMarker({
