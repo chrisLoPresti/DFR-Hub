@@ -287,7 +287,7 @@ useEffect( ()=>{
 },[])
  
   return <MapContextProvider>
-   {isLoaded && center && mapTypeId ?  <div className="relative w-full h-full flex">
+   {isLoaded &&  mapTypeId ?  <div className="relative w-full h-full flex">
       {/* isLoaded && center */}
       <GoogleMap
         mapContainerStyle={containerStyle}
