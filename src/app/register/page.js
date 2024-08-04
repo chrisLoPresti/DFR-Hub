@@ -19,7 +19,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (session) {
-      router.push("/");
+      router.push("/map-annotations");
     }
   }, [session, router]);
 
@@ -27,7 +27,7 @@ const Signup = () => {
     event.preventDefault();
     try {
       const formData = new FormData(event.currentTarget);
-      const signupResponse = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/api/auth/signup`, {
+      const signupResponse = await axios.post(`/api/auth/signup`, {
         email: formData.get("email"),
         password: formData.get("password"),
         name: formData.get("name"),
@@ -51,7 +51,7 @@ const Signup = () => {
   };
 
   return (
-    <section className="w-full h-screen flex items-center justify-center">
+    <section className="w-full h-screen flex items-center justify-center text-white">
       <form
         onSubmit={handleSubmit}
         className="p-6 xs:p-10	w-full max-w-[350px] flex flex-col justify-between items-center gap-2.5	
@@ -113,13 +113,13 @@ const Signup = () => {
           <div className="absolute h-px w-full top-2/4 bg-[#242424]"></div>
           <p className="w-8	h-6 bg-[#0a0a0a] z-10 flex items-center justify-center">or</p>
         </div>
-
+{/* 
         <button
           className="flex py-2 px-4 text-sm	align-middle items-center rounded text-999 bg-black 
           border border-solid border-[#242424] transition duration-150 ease hover:bg-[#1A1A1A] gap-3"
           onClick={() => signIn("google")}>
           <BiLogoGoogle className="text-2xl" /> Sign in with Google
-        </button>
+        </button> */}
         <Link href="/login" className="text-sm	text-[#888] transition duration-150 ease hover:text-white">
           Already have an account?
           </Link>

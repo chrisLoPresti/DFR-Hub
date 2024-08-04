@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from 'next-auth/react';
-import { BiLogoGoogle } from 'react-icons/bi';
+// import { BiLogoGoogle } from 'react-icons/bi';
 import { BiSolidShow } from 'react-icons/bi';
 import { BiSolidHide } from 'react-icons/bi';
 
@@ -42,7 +42,7 @@ const Signin = () => {
   };
 
   return (
-    <section className="w-full h-screen flex items-center justify-center">
+    <section className="w-full h-screen flex items-center justify-center text-white">
       <form
         className="p-6 xs:p-10	w-full max-w-[350px] flex flex-col justify-between items-center gap-2.5	
         border border-solid border-[#242424] bg-[#0a0a0a] rounded"
@@ -81,7 +81,7 @@ const Signin = () => {
         <button className="w-full bg-black text-white border border-solid border-[#242424] py-1.5 mt-2.5 rounded
         transition duration-150 ease hover:bg-[#1A1A1A] text-[13px]"
         >
-          Signup
+          Sign in
         </button>
 
         <div className="w-full h-10	relative flex items-center justify-center">
@@ -89,7 +89,7 @@ const Signin = () => {
           <p className="w-8	h-6 bg-[#0a0a0a] z-10 flex items-center justify-center">or</p>
         </div>
 
-        <button
+        {/* <button
           className="flex py-2 px-4 text-sm	align-middle items-center rounded text-999 bg-black text-white 
           border border-solid border-[#242424] transition duration-150 ease hover:bg-[#1A1A1A] gap-3"
           onClick={(e) => {
@@ -97,7 +97,7 @@ const Signin = () => {
             signIn("google")
           }}>
           <BiLogoGoogle className="text-2xl" /> Sign in with Google
-        </button>
+        </button> */}
         <Link href="/register" className="text-sm	text-[#888] transition duration-150 ease hover:text-white">
           Don&apos;t have an account?
         </Link>

@@ -4,12 +4,16 @@ import { Tooltip } from "react-tooltip";
 import SideNavigation from "./SideNavigation";
 import ToastProvider from "@/providers/toast-provider";
 import { MapContextProvider } from "@/context/MapContext";
+import { useSession } from "next-auth/react";
 
 const PageContainer = ({ children }) => {
+  const { data: { user: { name }} } = useSession();
   return (
     <>
       <header className="sticky top-0">
-        <div className="bg-tertiary w-full h-12 shadow-lg"></div>
+        <div className="bg-tertiary w-full h-12 shadow-lg flex items-cente p-2">
+          <p className="text-white ml-auto w-content">{name}</p>
+        </div>
       </header>
      <MapContextProvider>
       <ToastProvider>
