@@ -1,22 +1,20 @@
-"use client"
+"use client";
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-const Home = () =>{
+const Home = () => {
+  const { session } = useSession();
+  const router = useRouter();
 
-    const {session} = useSession();
-    const router = useRouter();
+  useEffect(() => {
+    if (session) {
+      router.push("/map");
+    }
+  }, []);
 
-    useEffect(() => {
-        if(session){
-            router.push('/map-annotations')
-        }
-    }, [])
-
-    return <div>home</div>
-
-}
+  return <div>home</div>;
+};
 
 export default Home;

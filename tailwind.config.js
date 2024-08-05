@@ -29,12 +29,13 @@ const config = {
       pattern: /bg-(red|green|blue|purple|yellow)-annotation/,
       variants: ["lg", "hover", "focus", "lg:hover"],
     },
-     {
+    {
       pattern: /text-(red|green|blue|purple|yellow)-annotation/,
     },
   ],
   plugins: [
-     require("@designbycode/tailwindcss-text-stroke"),
+    require("@designbycode/tailwindcss-text-stroke"),
+    require("tailwind-scrollbar"),
   ],
 };
 export default config;

@@ -42,7 +42,8 @@ export const MapContextProvider = ({ children }) => {
   const [defaultMarkerColor, setDefaultMarkerColor] = useState("blue");
 
   const createNewMapMarker = useCallback(
-    async (marker) => {
+    async (data) => {
+      const { selectedDevice, ...marker } = data;
       try {
         setLoading(true);
         setErrors(null);
@@ -60,9 +61,8 @@ export const MapContextProvider = ({ children }) => {
             lat: marker.position.lat,
             lon: marker.position.lng,
             z: elevation,
-            elementid: "a0eebed4-0c5e-4e3a-a8db-dbf7829e8d76",
-            workspaceid: "b0eebed4-0c5e-4e3a-a8db-dbf7829e8dd8",
-            sn: "1581F5BKD223Q00A520F",
+            workspaceid: selectedDevice.workspace_id,
+            sn: selectedDevice.serial_number,
           },
           {
             withCredentials: false,
@@ -168,7 +168,7 @@ export const MapContextProvider = ({ children }) => {
   }, [setErrors, setLoading]);
 
   const createMarker = useCallback(
-    async ({ latLng, name, color }) => {
+    async ({ latLng, name, color, selectedDevice }) => {
       if (loading) {
         return;
       }
@@ -179,6 +179,7 @@ export const MapContextProvider = ({ children }) => {
           lng: latLng.lng(),
         },
         color,
+        selectedDevice,
       });
       if (marker._id) {
         map.getBounds().contains(latLng);

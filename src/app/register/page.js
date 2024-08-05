@@ -1,13 +1,13 @@
 "use client";
 
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BiLogoGoogle } from 'react-icons/bi';
-import { BiSolidShow } from 'react-icons/bi';
-import { BiSolidHide } from 'react-icons/bi';
+import { BiLogoGoogle } from "react-icons/bi";
+import { BiSolidShow } from "react-icons/bi";
+import { BiSolidHide } from "react-icons/bi";
 
 const Signup = () => {
   const [error, setError] = useState();
@@ -19,7 +19,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (session) {
-      router.push("/map-annotations");
+      router.push("/map");
     }
   }, [session, router]);
 
@@ -89,7 +89,7 @@ const Signup = () => {
             flex items-center justify-center transition duration-150 ease hover:bg-[#1A1A1A]"
             onClick={(e) => {
               e.preventDefault();
-              setShowPassword(!showPassword)
+              setShowPassword(!showPassword);
             }}
           >
             {showPassword ? <BiSolidHide /> : <BiSolidShow />}
@@ -104,28 +104,35 @@ const Signup = () => {
           name="phone"
         />
 
-        <button className="w-full bg-black border border-solid border-[#242424] py-1.5 mt-2.5 rounded
-        transition duration-150 ease hover:bg-[#1A1A1A] text-[13px]">
+        <button
+          className="w-full bg-black border border-solid border-[#242424] py-1.5 mt-2.5 rounded
+        transition duration-150 ease hover:bg-[#1A1A1A] text-[13px]"
+        >
           Signup
         </button>
 
         <div className="w-full h-10	relative flex items-center justify-center">
           <div className="absolute h-px w-full top-2/4 bg-[#242424]"></div>
-          <p className="w-8	h-6 bg-[#0a0a0a] z-10 flex items-center justify-center">or</p>
+          <p className="w-8	h-6 bg-[#0a0a0a] z-10 flex items-center justify-center">
+            or
+          </p>
         </div>
-{/* 
+        {/* 
         <button
           className="flex py-2 px-4 text-sm	align-middle items-center rounded text-999 bg-black 
           border border-solid border-[#242424] transition duration-150 ease hover:bg-[#1A1A1A] gap-3"
           onClick={() => signIn("google")}>
           <BiLogoGoogle className="text-2xl" /> Sign in with Google
         </button> */}
-        <Link href="/login" className="text-sm	text-[#888] transition duration-150 ease hover:text-white">
+        <Link
+          href="/login"
+          className="text-sm	text-[#888] transition duration-150 ease hover:text-white"
+        >
           Already have an account?
-          </Link>
+        </Link>
       </form>
     </section>
   );
-}
+};
 
 export default Signup;

@@ -1,10 +1,11 @@
 "use client";
 
 import { Tooltip } from "react-tooltip";
-import SideNavigation from "./SideNavigation";
+import SideNavigation from "./side-navigation/SideNavigation";
 import ToastProvider from "@/providers/toast-provider";
 import { MapContextProvider } from "@/context/MapContext";
 import { useSession } from "next-auth/react";
+import { DeviceContextProvider } from "@/context/DeviceContext";
 
 const PageContainer = ({ children }) => {
   const { data: session } = useSession();
@@ -16,15 +17,17 @@ const PageContainer = ({ children }) => {
         </div>
       </header>
       <MapContextProvider>
-        <ToastProvider>
-          <div className="flex h-[calc(100vh_-_48px)] relative">
-            <div className="w-80">
-              <SideNavigation />
+        <DeviceContextProvider>
+          <ToastProvider>
+            <div className="flex h-[calc(100vh_-_48px)] relative">
+              <div className="w-80">
+                <SideNavigation />
+              </div>
+              <div className="w-[calc(100vw_-_320px)]">{children}</div>
+              <Tooltip id="tooltip" className="z-50" />
             </div>
-            <div className="w-[calc(100vw_-_320px)]">{children}</div>
-            <Tooltip id="tooltip" className="z-50" />
-          </div>
-        </ToastProvider>
+          </ToastProvider>
+        </DeviceContextProvider>
       </MapContextProvider>
     </>
   );

@@ -4,10 +4,10 @@ import { FormEvent, useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSession } from 'next-auth/react';
+import { useSession } from "next-auth/react";
 // import { BiLogoGoogle } from 'react-icons/bi';
-import { BiSolidShow } from 'react-icons/bi';
-import { BiSolidHide } from 'react-icons/bi';
+import { BiSolidShow } from "react-icons/bi";
+import { BiSolidHide } from "react-icons/bi";
 
 const Signin = () => {
   const [error, setError] = useState("");
@@ -19,7 +19,7 @@ const Signin = () => {
 
   useEffect(() => {
     if (session?.user) {
-      router.push("/map-annotations");
+      router.push("/map");
     }
   }, [session, router]);
 
@@ -33,12 +33,12 @@ const Signin = () => {
     });
 
     if (res?.error) {
-      setError(res.error)
-    };
+      setError(res.error);
+    }
 
     if (!res?.error) {
-      return router.push("/")
-    };
+      return router.push("/");
+    }
   };
 
   return (
@@ -72,13 +72,14 @@ const Signin = () => {
           flex items-center justify-center transition duration-150 ease hover:bg-[#1A1A1A]"
             onClick={(e) => {
               e.preventDefault();
-              setShowPassword(!showPassword)
+              setShowPassword(!showPassword);
             }}
           >
             {showPassword ? <BiSolidHide /> : <BiSolidShow />}
           </button>
         </div>
-        <button className="w-full bg-black text-white border border-solid border-[#242424] py-1.5 mt-2.5 rounded
+        <button
+          className="w-full bg-black text-white border border-solid border-[#242424] py-1.5 mt-2.5 rounded
         transition duration-150 ease hover:bg-[#1A1A1A] text-[13px]"
         >
           Sign in
@@ -86,7 +87,9 @@ const Signin = () => {
 
         <div className="w-full h-10	relative flex items-center justify-center">
           <div className="absolute h-px w-full top-2/4 bg-[#242424]"></div>
-          <p className="w-8	h-6 bg-[#0a0a0a] z-10 flex items-center justify-center">or</p>
+          <p className="w-8	h-6 bg-[#0a0a0a] z-10 flex items-center justify-center">
+            or
+          </p>
         </div>
 
         {/* <button
@@ -98,12 +101,15 @@ const Signin = () => {
           }}>
           <BiLogoGoogle className="text-2xl" /> Sign in with Google
         </button> */}
-        <Link href="/register" className="text-sm	text-[#888] transition duration-150 ease hover:text-white">
+        <Link
+          href="/register"
+          className="text-sm	text-[#888] transition duration-150 ease hover:text-white"
+        >
           Don&apos;t have an account?
         </Link>
       </form>
     </section>
   );
-}
+};
 
 export default Signin;

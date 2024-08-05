@@ -16,6 +16,8 @@ import ColorButtons from "@/components/maps/ColorButtons";
 import { IoCloseOutline } from "react-icons/io5";
 import { useMapContext } from "@/context/MapContext";
 import { FaArrowDownUpLock, FaArrowDownUpAcrossLine } from "react-icons/fa6";
+import { useDeviceContext } from "@/context/DeviceContext";
+import Image from "next/image";
 
 const libraries = ["places"];
 
@@ -29,6 +31,8 @@ export const Map = () => {
   const [enablePinPoints, setEnablePinPoints] = useState(false);
   const [lockMarkerDrag, setLockMarkerDrag] = useState(true);
   const [mapTypeId, setMapTypeId] = useState(null);
+
+  const { selectedDevice } = useDeviceContext();
 
   const {
     map,
@@ -107,18 +111,19 @@ export const Map = () => {
         name: address[0].name,
         latLng: address[0].geometry.location,
         color: defaultMarkerColor,
+        selectedDevice,
       });
     },
-    [searchBox, createMarker, defaultMarkerColor]
+    [searchBox, createMarker, defaultMarkerColor, selectedDevice]
   );
 
   const dropMarker = useCallback(
     ({ latLng }) => {
       if (enablePinPoints && !loading) {
-        createMarker({ latLng, color: defaultMarkerColor });
+        createMarker({ latLng, color: defaultMarkerColor, selectedDevice });
       }
     },
-    [createMarker, defaultMarkerColor, enablePinPoints, loading]
+    [createMarker, defaultMarkerColor, enablePinPoints, loading, selectedDevice]
   );
 
   const recenterMap = () => {
@@ -226,6 +231,29 @@ export const Map = () => {
               <FaArrowDownUpAcrossLine />
             )}
           </button>
+          {selectedDevice && (
+            <div
+              className="absolute top-16 left-2.5 text-xs text-white w-30 flex gap-y-2 items-center justify-center flex-col bg-slate-700 bg-opacity-90  rounded-md p-5"
+              key={selectedDevice?.serial_number}
+            >
+              <p className="underline w-full  mb-2">Active Device</p>
+              <p>{selectedDevice?.agency}</p>
+              <Image
+                src={selectedDevice?.image}
+                alt={selectedDevice?.device}
+                width={80}
+                height={80}
+              />
+              <div className="text-neutral-300 w-full">
+                <p className="underline">Device: </p>
+                <p>{selectedDevice?.device}</p>
+              </div>
+              <div className="text-neutral-300 w-full">
+                <p className="underline">Serial Number: </p>
+                {selectedDevice?.serial_number}
+              </div>
+            </div>
+          )}
         </>
       </GoogleMap>
       <div
