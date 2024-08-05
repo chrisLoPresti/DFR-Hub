@@ -233,7 +233,7 @@ export const Map = () => {
           </button>
           {selectedDevice && (
             <div
-              className="absolute top-16 left-2.5 text-xs text-white w-30 flex gap-y-2 items-center justify-center flex-col bg-slate-700 bg-opacity-90  rounded-md p-5"
+              className="absolute top-24 left-2.5 text-xs text-white w-30 flex gap-y-2 items-center justify-center flex-col bg-slate-700 bg-opacity-90  rounded-md p-5"
               key={selectedDevice?.serial_number}
             >
               <p className="underline w-full  mb-2">Active Device</p>
