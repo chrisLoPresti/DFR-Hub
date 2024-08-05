@@ -1,18 +1,15 @@
-"use client"
+"use client";
 
 import { errorToast, successToast } from "@/components/Toast";
 import axios from "axios";
-import { createContext, useEffect, useCallback, useContext, useState } from "react";
-import { GoogleMap, useJsApiLoader, StandaloneSearchBox} from "@react-google-maps/api";
-import { useGeolocated } from "react-geolocated";
-import MapMarker from "@/components/maps/MapMarker";
-import CreatePinPointButton from "@/components/maps/CreatePinPointButton";
+import {
+  createContext,
+  useEffect,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 import themeConfig from "@/../tailwind.config";
-import classNames from "classnames";
-import { MdOutlineDelete ,MdOutlineCenterFocusWeak } from "react-icons/md";
-import { FaSpinner } from "react-icons/fa6";
-import ColorButtons from "@/components/maps/ColorButtons";
-import { IoCloseOutline } from "react-icons/io5";
 
 export const MapContext = createContext({
   markers: [],
@@ -34,10 +31,12 @@ export const MapContextProvider = ({ children }) => {
   const [markers, setMarkers] = useState([]);
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
-  const[selectedMapMarker, setSelectedMapMarker] = useState(null);
+  const [selectedMapMarker, setSelectedMapMarker] = useState(null);
   //context map object to be shared
   const [map, setMap] = useState(null);
-   //context center point of the map to be shared
+  //context map elevationd data
+  const [elevator, setElevator] = useState(null);
+  //context center point of the map to be shared
   const [center, setCenter] = useState(null);
   //context map pin colors
   const [defaultMarkerColor, setDefaultMarkerColor] = useState("blue");
@@ -48,13 +47,19 @@ export const MapContextProvider = ({ children }) => {
         setLoading(true);
         setErrors(null);
 
+        const { results } = await elevator.getElevationForLocations({
+          locations: [marker.position],
+        });
+
+        const elevation = results[0].elevation;
+
         const res = await axios.post(
           "https://nj.unmannedlive.com/dfr/newcall",
           {
             ...marker,
             lat: marker.position.lat,
             lon: marker.position.lng,
-            z: "10.5",
+            z: elevation,
             elementid: "a0eebed4-0c5e-4e3a-a8db-dbf7829e8d76",
             workspaceid: "b0eebed4-0c5e-4e3a-a8db-dbf7829e8dd8",
             sn: "1581F5BKD223Q00A520F",
@@ -63,26 +68,28 @@ export const MapContextProvider = ({ children }) => {
             withCredentials: false,
           }
         );
-      if(res.status === 201){
-        const { data } = await axios.post(
-          `/api/map-annotations/marker`,
-          marker
-        );
-        successToast(`Successfully created Map Marker: ${data.name}!`);
-        setMarkers([...markers, data]);
-        return data;
-      } else {
-        errorToast(`Unable to create map marker: ${marker.name}`);
-      }
-
-        
+        if (res.status === 201) {
+          const { data } = await axios.post(`/api/map-annotations/marker`, {
+            ...marker,
+            position: {
+              ...marker.position,
+              elevation,
+            },
+          });
+          successToast(`Successfully created Map Marker: ${data.name}!`);
+          setMarkers([...markers, data]);
+          setLoading(false);
+          return data;
+        } else {
+          errorToast(`Unable to create map marker: ${marker.name}`);
+        }
       } catch (error) {
         setLoading(false);
         errorToast(`Unable to create map marker: ${marker.name}`);
         return { error };
       }
     },
-    [setErrors, setLoading, markers]
+    [setErrors, setLoading, markers, elevator]
   );
 
   const deleteMapMarker = useCallback(
@@ -91,16 +98,13 @@ export const MapContextProvider = ({ children }) => {
         setLoading(true);
         setErrors(null);
 
-        
-  const { data } = await axios.delete(
-    `/api/map-annotations/marker`,
-    {data: {marker}}
-  );
-  successToast(`Successfully deleted Map Marker: ${marker.name}`);
-  setMarkers([...markers.filter(({ name }) => name !== marker.name)]);
-  return data;
-
-        
+        const { data } = await axios.delete(`/api/map-annotations/marker`, {
+          data: { marker },
+        });
+        successToast(`Successfully deleted Map Marker: ${marker.name}`);
+        setMarkers([...markers.filter(({ name }) => name !== marker.name)]);
+        setLoading(false);
+        return data;
       } catch (error) {
         setLoading(false);
         return { error };
@@ -109,13 +113,51 @@ export const MapContextProvider = ({ children }) => {
     [setErrors, setLoading, markers]
   );
 
+  const updateMapMarker = useCallback(
+    async (marker) => {
+      try {
+        setLoading(true);
+        setErrors(null);
+
+        const { data: updatedMarker } = await axios.put(
+          `/api/map-annotations/marker`,
+          marker
+        );
+        successToast(`Successfully updated Map Marker: ${updatedMarker.name}`);
+
+        const index = markers.findIndex(
+          ({ name }) => name === updatedMarker.name
+        );
+
+        if (selectedMapMarker.name === updatedMarker.name) {
+          setSelectedMapMarker(updatedMarker);
+        }
+
+        markers[index] = updatedMarker;
+        setMarkers([...markers]);
+
+        setLoading(false);
+        return data;
+      } catch (error) {
+        setLoading(false);
+        return { error };
+      }
+    },
+    [
+      setErrors,
+      setLoading,
+      markers,
+      setMarkers,
+      selectedMapMarker,
+      setSelectedMapMarker,
+    ]
+  );
+
   const getAllMapMarkers = useCallback(async () => {
     try {
       setLoading(true);
       setErrors(null);
-      const { data } = await axios.get(
-        `/api/map-annotations/marker`
-      );
+      const { data } = await axios.get(`/api/map-annotations/marker`);
 
       setMarkers(data);
       return newMarker;
@@ -125,42 +167,54 @@ export const MapContextProvider = ({ children }) => {
     }
   }, [setErrors, setLoading]);
 
-  
-  const createMarker = useCallback( async ({ latLng, name , color}) => {
-    const marker =  await createNewMapMarker({
-        name: name || `new pin ${new Date().toLocaleString()}`,// `new pin ${uuidv4()}`,
+  const createMarker = useCallback(
+    async ({ latLng, name, color }) => {
+      if (loading) {
+        return;
+      }
+      const marker = await createNewMapMarker({
+        name: name || `new pin ${new Date().toLocaleString()}`, // `new pin ${uuidv4()}`,
         position: {
           lat: latLng.lat(),
           lng: latLng.lng(),
         },
         color,
       });
-      if(marker._id){
-        map.getBounds().contains(latLng)
-        map.panTo(latLng)
+      if (marker._id) {
+        map.getBounds().contains(latLng);
+        map.panTo(latLng);
         setSelectedMapMarker(marker);
       }
-  }, [map,createNewMapMarker]);
+    },
+    [map, createNewMapMarker, loading]
+  );
 
   const deleteMarker = useCallback(() => {
-    const index = markers.findIndex(({ name }) => name === selectedMapMarker.name);
+    if (loading) {
+      return;
+    }
+    const index = markers.findIndex(
+      ({ name }) => name === selectedMapMarker.name
+    );
     deleteMapMarker(selectedMapMarker);
     markers.splice(index, 1);
     setSelectedMapMarker(null);
     setMarkers([...markers]);
-  }, [selectedMapMarker, markers])
+  }, [selectedMapMarker, markers, deleteMapMarker, loading]);
 
-  const selectMapMarker = useCallback((index) => () => {
-    if(index !== null){
-    setCenter(markers[index].position);
-    setSelectedMapMarker(markers[index])
-    } else {
-      setSelectedMapMarker(null);
-    }
-  },[markers])
+  const selectMapMarker = useCallback(
+    (index) => () => {
+      if (index !== null) {
+        setCenter(markers[index].position);
+        setSelectedMapMarker(markers[index]);
+      } else {
+        setSelectedMapMarker(null);
+      }
+    },
+    [markers]
+  );
 
-
-const changeDefaultMarkerColor = (color) => () => {
+  const changeDefaultMarkerColor = (color) => () => {
     setDefaultMarkerColor(color);
   };
 
@@ -171,230 +225,31 @@ const changeDefaultMarkerColor = (color) => () => {
   return (
     <MapContext.Provider
       value={{
-       markers, setMarkers,
-      errors, setErrors,
-      loading, setLoading,
-      selectedMapMarker, setSelectedMapMarker,
-      map, setMap,
-      center, setCenter,
-      defaultMarkerColor, changeDefaultMarkerColor,
-      createMarker,
-      deleteMarker,
-      selectMapMarker
+        markers,
+        setMarkers,
+        errors,
+        setErrors,
+        loading,
+        setLoading,
+        selectedMapMarker,
+        setSelectedMapMarker,
+        map,
+        setMap,
+        elevator,
+        setElevator,
+        center,
+        setCenter,
+        defaultMarkerColor,
+        changeDefaultMarkerColor,
+        createMarker,
+        deleteMarker,
+        selectMapMarker,
+        updateMapMarker,
       }}
     >
       {children}
     </MapContext.Provider>
   );
 };
-
-const libraries = ["places"];
-
-const containerStyle = {
-  width: "100%",
-  height: "100%",
-};
-
-export const Map = () => {
- const [searchBox, setSearchBox] = useState(null);
-  const [enablePinPoints, setEnablePinPoints] = useState(false);
-  const [mapTypeId, setMapTypeId] = useState(null);
-
-
-    const { map, createMarker, deleteMarker, markers , center, setCenter, setMap, selectedMapMarker, selectMapMarker, defaultMarkerColor, changeDefaultMarkerColor} = useMapContext();
- 
-    const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API || "",
-    libraries
-  });
-
-   const { coords } = useGeolocated({
-    positionOptions: {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: Infinity,
-    },
-    watchPosition: false,
-    userDecisionTimeout: null,
-    suppressLocationOnMount: false,
-    // geolocationProvider: navigator.geolocation,
-    isOptimisticGeolocationEnabled: true,
-    watchLocationPermissionChange: false,
-  });
-
-    const onMapLoad = useCallback((map) => {
-    // This is just an example of getting and using the map instance!!! don't just blindly copy!
-    // const bounds = new window.google.maps.LatLngBounds(center);
-    // map.fitBounds(bounds);
-    map.setZoom(15);
-    setMap(map);
-  }, []);
-
-  const onSearchBoxLoad = useCallback((newSearchBox) => {
-    // This is just an example of getting and using the map instance!!! don't just blindly copy!
-    // const bounds = new window.google.maps.LatLngBounds(center);
-    // map.fitBounds(bounds);
-    setSearchBox(newSearchBox);
-  }, []);
-
-  
-  const onUnmount = useCallback(() => {
-    setMap(null);
-  }, []);
-
-
-  const toggleEnablePinPoints = () => {
-    if (enablePinPoints) {
-      map.setOptions({ draggableCursor: "" });
-    } else {
-      map.setOptions({ draggableCursor: "crosshair" });
-    }
-    setEnablePinPoints(!enablePinPoints);
-  };
-  
-  const onAddressFound = useCallback((e) => {
-    const address = searchBox.getPlaces();
-
-  createMarker({ name:address[0].name,  latLng: address[0].geometry.location , color: defaultMarkerColor });
-  },[searchBox,createMarker, defaultMarkerColor]);
-
-  const dropMarker = useCallback(({ latLng }) => {
-
-  createMarker({ latLng, color: defaultMarkerColor });
-  },[createMarker, defaultMarkerColor]);
-
-  const recenterMap = () => {
-    map.setCenter(selectedMapMarker?.position);
-  }
-
-  const storeMapTypeId = useCallback(() => {
-    const newMapTypeId =  map?.getMapTypeId() ?? mapTypeId;
-    if(newMapTypeId  !== mapTypeId){
-     localStorage.setItem("mapTypeId", newMapTypeId);
-     setMapTypeId(newMapTypeId)
-    }
-  }, [map, mapTypeId]);
-
-  useEffect(() => {
-      setCenter({
-        lat: coords?.latitude,
-        lng: coords?.longitude,
-      });
-    }, [coords]);
-
-useEffect( ()=>{
-  const storedMapTypeId =  localStorage?.getItem('mapTypeId') ?? 'hybrid';
-  setMapTypeId(storedMapTypeId);
-},[])
- 
-  return <MapContextProvider>
-   {isLoaded &&  mapTypeId ?  <div className="relative w-full h-full flex">
-      {/* isLoaded && center */}
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={1}
-        onLoad={onMapLoad}
-        onUnmount={onUnmount}
-        onClick={enablePinPoints ? dropMarker : null}
-        onMapTypeIdChanged={storeMapTypeId}
-        options={{
-          fullscreenControl: false,
-          mapTypeId: mapTypeId,
-          rotateControl: true,
-          streetViewControl: false,
-          // disableDefaultUI: true
-        }}
-      >
-        {/* Child components, such as markers, info windows, etc. */}
-        <>
-        <StandaloneSearchBox
-         onPlacesChanged={onAddressFound} 
-         onLoad={onSearchBoxLoad}
-         >
-            <input
-              type='text'
-              placeholder='Search for an address'
-              className="overflow-ellipses outline-none w-96 h-27 absolute top-2.5 p-2 rounded-sm shadow-lg right-2 z-20"
-            />
-          </StandaloneSearchBox>
-          {markers.map(({ position: { lat, lng }, name, color }, index) => (
-            <MapMarker
-              key={name}
-              lat={lat}
-              lng={lng}
-              name={name}
-              color={color}
-              index={index}
-              selectMapMarker={selectMapMarker}
-              selectedMapMarker={selectedMapMarker}
-            />
-          ))}
-          <CreatePinPointButton
-            enablePinPoints={enablePinPoints}
-            toggleEnablePinPoints={toggleEnablePinPoints}
-            color={defaultMarkerColor}
-            changeColor={changeDefaultMarkerColor}
-          />
-        </>
-      </GoogleMap>
-       <div className={classNames('px-5 bg-tertiary w-80 flex flex-col gap-y-2', {'hidden invisible ': !selectedMapMarker})}>
-      
-           <div className="flex justify-center items-center">
-             <label className='text-white' htmlFor='selected-marker-name'>Selected Map Marker</label>
-              <button onClick={selectMapMarker(null)} className="text-white ml-auto hover:bg-white hover:bg-opacity-10 rounded-full p-2">
-          <IoCloseOutline className="text-xl"/>
-
-        </button>
-           </div>
-       <div className="flex items-center justify-between">
-
-          <input id="selected-marker-name" type="text" value={selectedMapMarker?.name} className='w-full shadow-inner text-sm p-2 rounded-sm'/>
-              <div className="flex items-center justify-center gap-x-2 ml-2">
-             <button 
-                data-tooltip-id="tooltip"
-                data-tooltip-content=" Recenter"
-                onClick={recenterMap}
-           >
-              <MdOutlineCenterFocusWeak  className="text-white text-xl"/>
-            </button>
-            <button
-                data-tooltip-id="tooltip"
-                data-tooltip-content=" Delete"
-                onClick={deleteMarker}
-            >
-              <MdOutlineDelete className="text-white text-xl"/>
-            </button>
-           </div>
-          </div>
-          <ColorButtons color={selectedMapMarker?.color} className="bg-transparent"/>
-          <div className="text-sm w-full flex flex-col gap-y-2">
-            <div className="flex items-center w-full justify-between">
-              <p className="w-1/3 text-white"> Longitude:</p>  <input type="text" value={selectedMapMarker?.position?.lng} className='w-2/3 p-2 shadow-inner text-sm rounded-sm'/>
-            </div>
-              <div className="flex items-center w-full justify-between">
-              <p className="w-1/3 text-white"> Latitude: </p> <input type="text" value={selectedMapMarker?.position?.lat} className='w-2/3 p-2 shadow-inner text-sm rounded-sm'/>
-              </div>
-                <hr className="my-2"/>
-             <div className="text-white">
-                <p className="mb-2">Created By:</p>
-              <p>{selectedMapMarker?.created_by?.name}</p>
-                <p>{selectedMapMarker?.created_by?.email}</p>
-          </div>
-             </div>
-        </div>
-    </div>
-   : 
-    <div className="flex w-full h-full items-center justify-center gap-3">
-      <FaSpinner  className="animate-spin h-5 w-5"/>
-     <p>Processing...</p>
-  </div>}
-  </MapContextProvider>
-}
-
-
-
-
 
 export default MapContext;

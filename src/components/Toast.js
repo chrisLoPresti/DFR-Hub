@@ -2,8 +2,8 @@ import { toast } from "react-toastify";
 
 export const errorToast = (message, position, autoClose) =>
   toast.error(message, {
-    position: position || "top-right",
-    autoClose: autoClose || autoClose === undefined ? 10000 : autoClose,
+    position: position || "top-center",
+    autoClose: autoClose || autoClose === undefined ? 3000 : autoClose,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -14,8 +14,8 @@ export const errorToast = (message, position, autoClose) =>
 
 export const successToast = (message, position, autoClose) =>
   toast.success(message, {
-    position: position || "top-right",
-    autoClose: autoClose || autoClose === undefined ? 10000 : autoClose,
+    position: position || "top-center",
+    autoClose: autoClose || autoClose === undefined ? 3000 : autoClose,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -26,8 +26,8 @@ export const successToast = (message, position, autoClose) =>
 
 export const warnToast = (message, position, autoClose) =>
   toast.warn(message, {
-    position: position || "top-right",
-    autoClose: autoClose || autoClose === undefined ? 10000 : autoClose,
+    position: position || "top-center",
+    autoClose: autoClose || autoClose === undefined ? 3000 : autoClose,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,

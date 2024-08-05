@@ -13,6 +13,9 @@ const MapMarkerSchema = new Schema({
     lng: {
       type: Number,
     },
+    elevation: {
+      type: Number,
+    },
   },
   color: {
     type: String,
