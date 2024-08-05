@@ -6,6 +6,7 @@ import ToastProvider from "@/providers/toast-provider";
 import { MapContextProvider } from "@/context/MapContext";
 import { useSession } from "next-auth/react";
 import { DeviceContextProvider } from "@/context/DeviceContext";
+import { Suspense } from "react";
 
 const PageContainer = ({ children }) => {
   const { data: session } = useSession();
@@ -21,7 +22,9 @@ const PageContainer = ({ children }) => {
           <ToastProvider>
             <div className="flex h-[calc(100vh_-_48px)] relative">
               <div className="w-80">
-                <SideNavigation />
+                <Suspense>
+                  <SideNavigation />
+                </Suspense>
               </div>
               <div className="w-[calc(100vw_-_320px)]">{children}</div>
               <Tooltip id="tooltip" className="z-50" />
