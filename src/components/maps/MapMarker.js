@@ -25,7 +25,7 @@ const MapMarker = ({
         ...marker,
         position: { lat: newLat, lng: newLng, elevation },
       });
-      await selectMapMarker(index)();
+      selectMapMarker(index)();
     },
 
     [updateMapMarker, elevator, marker, selectMapMarker, index]

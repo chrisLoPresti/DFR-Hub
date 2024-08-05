@@ -8,6 +8,8 @@ const ColorButtons = ({ className, color, changeColor }) => {
       className={classNames("bg-white flex shadow-sm rounded-sm p-2 gap-x-2", {
         [className]: className,
       })}
+      data-tooltip-id="tooltip"
+      data-tooltip-content="Change default marker color"
     >
       {Object.keys(markerColors).map((key) => (
         <button

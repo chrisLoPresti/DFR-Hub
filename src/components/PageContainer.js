@@ -22,7 +22,7 @@ const PageContainer = ({ children }) => {
               <SideNavigation />
             </div>
             <div className="w-[calc(100vw_-_320px)]">{children}</div>
-            <Tooltip id="tooltip" />
+            <Tooltip id="tooltip" className="z-50" />
           </div>
         </ToastProvider>
       </MapContextProvider>

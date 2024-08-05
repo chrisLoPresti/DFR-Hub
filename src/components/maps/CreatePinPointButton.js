@@ -38,6 +38,10 @@ const CreatePinPointButton = ({
           }
         )}
         onClick={toggleEnablePinPoints}
+        data-tooltip-id="tooltip"
+        data-tooltip-content={`${
+          enablePinPoints ? "Disable" : "Enable"
+        } click to create markers`}
       >
         <BsSuitDiamond />
       </button>
