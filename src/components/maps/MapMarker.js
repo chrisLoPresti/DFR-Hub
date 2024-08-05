@@ -10,6 +10,7 @@ const MapMarker = ({
   selectedMapMarker,
   elevator,
   updateMapMarker,
+  lockMarkerDrag,
 }) => {
   const updatePosition = useCallback(
     async ({ latLng }) => {
@@ -35,7 +36,7 @@ const MapMarker = ({
     <Marker
       position={marker.position}
       markerId={marker.name}
-      draggable={true}
+      draggable={lockMarkerDrag ? false : true}
       onDragEnd={updatePosition}
       onClick={selectMapMarker(index)}
       icon={{

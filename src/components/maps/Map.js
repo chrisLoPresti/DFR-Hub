@@ -15,6 +15,7 @@ import { FaSpinner } from "react-icons/fa6";
 import ColorButtons from "@/components/maps/ColorButtons";
 import { IoCloseOutline } from "react-icons/io5";
 import { useMapContext } from "@/context/MapContext";
+import { FaArrowDownUpLock, FaArrowDownUpAcrossLine } from "react-icons/fa6";
 
 const libraries = ["places"];
 
@@ -26,6 +27,7 @@ const containerStyle = {
 export const Map = () => {
   const [searchBox, setSearchBox] = useState(null);
   const [enablePinPoints, setEnablePinPoints] = useState(false);
+  const [lockMarkerDrag, setLockMarkerDrag] = useState(true);
   const [mapTypeId, setMapTypeId] = useState(null);
 
   const {
@@ -138,6 +140,10 @@ export const Map = () => {
     [selectedMapMarker, updateMapMarker]
   );
 
+  const toggleLockMarkerDrag = () => {
+    setLockMarkerDrag(!lockMarkerDrag);
+  };
+
   useEffect(() => {
     setCenter({
       lat: coords?.latitude,
@@ -190,6 +196,7 @@ export const Map = () => {
               selectMapMarker={selectMapMarker}
               selectedMapMarker={selectedMapMarker}
               updateMapMarker={updateMapMarker}
+              lockMarkerDrag={lockMarkerDrag}
             />
           ))}
           <CreatePinPointButton
@@ -198,6 +205,27 @@ export const Map = () => {
             color={defaultMarkerColor}
             changeColor={changeDefaultMarkerColor}
           />
+          <button
+            className={classNames(
+              "rounded-sm p-2 shadow-lg bg-white border-2 ml-2 absolute top-32 right-2.5 flex",
+              {
+                "text-blue-annotation border-blue-annotation bg-gradient-to-tr from-white from-80% to-blue-annotation to-90%":
+                  !lockMarkerDrag,
+                "border-white": lockMarkerDrag,
+              }
+            )}
+            onClick={toggleLockMarkerDrag}
+            data-tooltip-id="tooltip"
+            data-tooltip-content={`${
+              lockMarkerDrag ? "Unlock" : "Lock"
+            } marker dragging`}
+          >
+            {lockMarkerDrag ? (
+              <FaArrowDownUpLock />
+            ) : (
+              <FaArrowDownUpAcrossLine />
+            )}
+          </button>
         </>
       </GoogleMap>
       <div
