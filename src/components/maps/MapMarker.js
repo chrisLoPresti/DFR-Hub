@@ -21,12 +21,14 @@ const MapMarker = ({
 
       const elevation = results[0].elevation;
       //call to update marker
-      updateMapMarker({
+      await updateMapMarker({
         ...marker,
         position: { lat: newLat, lng: newLng, elevation },
       });
+      await selectMapMarker(index)();
     },
-    [updateMapMarker, elevator, marker]
+
+    [updateMapMarker, elevator, marker, selectMapMarker, index]
   );
 
   return (

@@ -204,14 +204,17 @@ export const MapContextProvider = ({ children }) => {
 
   const selectMapMarker = useCallback(
     (index) => () => {
-      if (index !== null) {
+      if (index === null) {
+        setSelectedMapMarker(null);
+        return;
+      }
+
+      if (!selectedMapMarker || selectedMapMarker._id !== markers[index]._id) {
         setCenter(markers[index].position);
         setSelectedMapMarker(markers[index]);
-      } else {
-        setSelectedMapMarker(null);
       }
     },
-    [markers]
+    [markers, selectedMapMarker]
   );
 
   const changeDefaultMarkerColor = (color) => () => {
