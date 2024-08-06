@@ -41,7 +41,7 @@ const LiveStream = ({ endPoint, closeEndpoint }) => {
       >
         <div
           className={classNames(
-            "bg-tertiary  z-50 flex justify-between flex-col z-50 absolute",
+            "bg-tertiary  z-50 flex justify-between flex-col z-50 absolute cursor-move",
             {
               "": screenSize.height === "100%",
               "rounded-md": screenSize.height !== "100%",
