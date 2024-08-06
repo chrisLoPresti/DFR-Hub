@@ -52,7 +52,10 @@ const LiveStream = ({ endPoint, closeEndpoint }) => {
           <Iframe
             url={endPoint}
             {...screenSize}
-            className="block relative cursor-none"
+            className={classNames("block relative cursor-none", {
+              "": screenSize.height === "100%",
+              "rounded-t-md": screenSize.height !== "100%",
+            })}
           />
           <div className="p-2 flex">
             <button
