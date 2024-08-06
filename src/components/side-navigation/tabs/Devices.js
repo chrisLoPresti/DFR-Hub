@@ -8,8 +8,7 @@ const Devices = ({ visible }) => {
   const { devices, selectDevice } = useDeviceContext();
   return visible ? (
     <div className="flex flex-col truncate p-5 gap-y-5">
-      <p className>Stored Devices</p>
-
+      <p>Stored Devices</p>
       {devices.map(
         (
           { serial_number, workspace_id, ntfy, image, agency, device },
@@ -59,7 +58,7 @@ const Devices = ({ visible }) => {
                     data-tooltip-id="tooltip"
                     data-tooltip-content="Copy to clipbaord"
                   >
-                    <MdContentCopy className="" />
+                    <MdContentCopy />
                   </button>
                 </CopyToClipboard>
               </div>

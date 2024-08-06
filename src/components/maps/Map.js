@@ -18,6 +18,7 @@ import { useMapContext } from "@/context/MapContext";
 import { FaArrowDownUpLock, FaArrowDownUpAcrossLine } from "react-icons/fa6";
 import { useDeviceContext } from "@/context/DeviceContext";
 import Image from "next/image";
+import LiveStream from "./LiveStream";
 
 const libraries = ["places"];
 
@@ -31,6 +32,7 @@ export const Map = () => {
   const [enablePinPoints, setEnablePinPoints] = useState(false);
   const [lockMarkerDrag, setLockMarkerDrag] = useState(true);
   const [mapTypeId, setMapTypeId] = useState(null);
+  const [liveStreamLink, setLiveStreamLink] = useState(null);
 
   const { selectedDevice } = useDeviceContext();
 
@@ -149,6 +151,10 @@ export const Map = () => {
     setLockMarkerDrag(!lockMarkerDrag);
   };
 
+  const closeLiveStreamLink = () => {
+    setLiveStreamLink(null);
+  };
+
   useEffect(() => {
     setCenter({
       lat: coords?.latitude,
@@ -180,8 +186,7 @@ export const Map = () => {
           // disableDefaultUI: true
         }}
       >
-        {/* Child components, such as markers, info windows, etc. */}
-        <>
+        <div className="w-full h-full relative">
           <StandaloneSearchBox
             onPlacesChanged={onAddressFound}
             onLoad={onSearchBoxLoad}
@@ -252,9 +257,23 @@ export const Map = () => {
                 <p className="underline">Serial Number: </p>
                 {selectedDevice?.serial_number}
               </div>
+              <button
+                className="rounded-md bg-tertiary p-2 w-full"
+                onClick={() =>
+                  setLiveStreamLink(
+                    `https://unmannedar.com/getlive.html?key=${selectedDevice?.stream_id}`
+                  )
+                }
+              >
+                Start Live Steam
+              </button>
             </div>
           )}
-        </>
+          <LiveStream
+            endPoint={liveStreamLink}
+            closeEndpoint={closeLiveStreamLink}
+          />
+        </div>
       </GoogleMap>
       <div
         className={classNames("px-5 bg-tertiary w-80 flex flex-col gap-y-2", {
