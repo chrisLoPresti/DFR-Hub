@@ -49,7 +49,11 @@ const LiveStream = ({ endPoint, closeEndpoint }) => {
           )}
           style={{ ...screenSize }}
         >
-          <Iframe url={endPoint} {...screenSize} className="block relative" />
+          <Iframe
+            url={endPoint}
+            {...screenSize}
+            className="block relative cursor-none"
+          />
           <div className="p-2 flex">
             <button
               className="text-white rounded-md p-2 bg-slate-700"
