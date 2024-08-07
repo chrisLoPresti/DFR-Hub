@@ -186,7 +186,7 @@ export const Map = () => {
           // disableDefaultUI: true
         }}
       >
-        <div className="w-full h-full relative">
+        <>
           <StandaloneSearchBox
             onPlacesChanged={onAddressFound}
             onLoad={onSearchBoxLoad}
@@ -273,7 +273,7 @@ export const Map = () => {
             endPoint={liveStreamLink}
             closeEndpoint={closeLiveStreamLink}
           />
-        </div>
+        </>
       </GoogleMap>
       <div
         className={classNames("px-5 bg-tertiary w-80 flex flex-col gap-y-2", {
