@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import themeConfig from "@/../tailwind.config";
+import useSWR from 'swr'
 
 export const MapContext = createContext({
   markers: [],
@@ -40,6 +41,9 @@ export const MapContextProvider = ({ children }) => {
   const [center, setCenter] = useState(null);
   //context map pin colors
   const [defaultMarkerColor, setDefaultMarkerColor] = useState("blue");
+
+  const { data, error, isLoading } = useSWR('/api/map-annotations/marker', axios.get)
+
 
   const createNewMapMarker = useCallback(
     async (data) => {
@@ -223,8 +227,20 @@ export const MapContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    getAllMapMarkers();
-  }, []);
+if(data){
+setMarkers(data.data)
+}
+if(selectedMapMarker){
+  const match = data.data.find(marker => marker._id === selectedMapMarker._id);
+  if(match){
+    setSelectedMapMarker(match)
+  }
+}
+  },[data, selectedMapMarker])
+
+  // useEffect(() => {
+  //   getAllMapMarkers();
+  // }, []);
 
   return (
     <MapContext.Provider
